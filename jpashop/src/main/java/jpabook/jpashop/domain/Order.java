@@ -18,14 +18,20 @@ public class Order {
     @Column(name = "order_id")
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private Member member;
+
+    /*
+    *   @ManyToOne(fetch = FetchType.Eager) 설정 시 n + 1 문제
+    *   JPQL select o from order o; -> SQL select * from order 100 + 1(order)
+    *   order의 결과가 100개 이면 거기에 속한 member_id를 다시 100번 select 를 날려서 n + 1 문제가 발생한다.
+    * */
 
     @OneToMany(mappedBy = "order")
     private List<OrderItem> orderItems = new ArrayList<>();
 
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "delivery_id")
     private Delivery delivery;
 
